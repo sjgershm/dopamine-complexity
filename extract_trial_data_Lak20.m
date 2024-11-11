@@ -2,6 +2,19 @@ function tbl = extract_trial_data_Lak20(BehPhotoM)
 
     % Extract dopamine response aligned to different events
     % This uses data from https://figshare.com/articles/dataset/VTA_DA_Vis2AFC/24298336?file=42649654
+    % You need to be in the directory where VTA_DA_Vis2AFC.mat is stored.
+    %
+    % USAGE: tbl = extract_trial_data_Lak20([BehPhotoM])
+    %
+    % INPUTS:
+    %   BehPhotoM (optional) - array stored in VTA_DA_Vis2AFC.mat
+    %
+    % OUTPUTS:
+    %   tbl - data table
+    %
+    % This function also writes a csv file with the same data.
+    %
+    % Sam Gershman, Nov 2024
 
     if nargin < 1
         load('VTA_DA_Vis2AFC')
@@ -46,16 +59,17 @@ function tbl = extract_trial_data_Lak20(BehPhotoM)
             actionresponse = zscore(actionresponse);
             outcomeresponse = zscore(outcomeresponse);
 
-            [cost, marginal] = compute_cost(stimulus,action);
+            [cost, marginal, surprisal] = compute_cost(stimulus,action);
             [state_value, action_value, action_diff] = compute_value(stimulus,reward,action);
 
             data = [data; zeros(nTrials,1)+i zeros(nTrials,1)+session_count (1:nTrials)' action stimulus reward stimresponse ...
-                actionresponse outcomeresponse cost state_value action_value action_diff marginal];
+                actionresponse outcomeresponse cost state_value action_value action_diff marginal surprisal];
         end
     end
 
     % create table
-    varnames = {'animal' 'session' 'trial' 'action' 'stimulus' 'outcome' 'stimresponse' 'actionresponse' 'outcomeresponse' 'cost' 'state_value' 'action_value' 'action_diff' 'marginal'};
+    varnames = {'animal' 'session' 'trial' 'action' 'stimulus' 'outcome' 'stimresponse' 'actionresponse' 'outcomeresponse'...
+        'cost' 'state_value' 'action_value' 'action_diff' 'marginal' 'surprisal'};
     tbl = array2table(data,'VariableNames',varnames);
 
     % write table to csv file

@@ -1,8 +1,15 @@
 function plot_figures(fig,tbl)
 
-    % Generate results figure
+    % Generate results figures.
+    % To produce the main results figure, use plot_figures('behavioral_results',tbl) and plot_figures('neural_results',tbl).
     %
-    % To produce the main results figure, use plot_figures('results',tbl).
+    % USAGE: plot_figures(fig,[tbl])
+    %
+    % INPUTS:
+    %   fig - figure name
+    %   tbl (optional) - data table
+    %
+    % Sam Gershman, Nov 2024
 
     C = colormap('linspecer');
 
@@ -12,28 +19,33 @@ function plot_figures(fig,tbl)
 
     switch fig
 
-        case 'results'
+        case 'behavioral_results'
 
-            subplot(2,3,1);
+            subplot(1,3,1);
             plot_figures('RC_curve',tbl);
-            mytitle('A','Left','FontSize',25,'FontWeight','Bold');
-            subplot(2,3,2);
+            mytitle('A','Left','FontSize',30,'FontWeight','Bold');
+            subplot(1,3,2);
             plot_figures('bias_hist',tbl);
-            mytitle('B','Left','FontSize',25,'FontWeight','Bold');
-            subplot(2,3,3);
+            mytitle('B','Left','FontSize',30,'FontWeight','Bold');
+            subplot(1,3,3);
             plot_figures('choice_prob',tbl);
-            mytitle('C','Left','FontSize',25,'FontWeight','Bold');
-            subplot(2,3,4);
-            plot_figures('coefficients',tbl);
-            mytitle('D','Left','FontSize',25,'FontWeight','Bold');
-            subplot(2,3,5);
-            plot_figures('residual',tbl);
-            mytitle('E','Left','FontSize',25,'FontWeight','Bold');
-            subplot(2,3,6);
-            plot_figures('coeff_invtemp',tbl);
-            mytitle('F','Left','FontSize',25,'FontWeight','Bold');
+            mytitle('C','Left','FontSize',30,'FontWeight','Bold');
 
-            set(gcf,'Position',[200 200 1500 800])
+            set(gcf,'Position',[200 200 1500 400])
+
+        case 'neural_results'
+
+            subplot(1,3,1);
+            plot_figures('coefficients',tbl);
+            mytitle('A','Left','FontSize',30,'FontWeight','Bold');
+            subplot(1,3,2);
+            plot_figures('residual',tbl);
+            mytitle('B','Left','FontSize',30,'FontWeight','Bold');
+            subplot(1,3,3);
+            plot_figures('coeff_invtemp',tbl);
+            mytitle('C','Left','FontSize',30,'FontWeight','Bold');
+
+            set(gcf,'Position',[200 200 1500 400])
         
         case 'RC_curve'
 
@@ -57,7 +69,7 @@ function plot_figures(fig,tbl)
             hold on;
             plot(r,v,'+','LineWidth',4,'MarkerSize',10,'Color',C(60,:))
 
-            set(gca,'FontSize',20,'XLim',[0 0.5])
+            set(gca,'FontSize',25,'XLim',[0 0.5])
             ylabel('Average reward','FontSize',25)
             xlabel('Policy complexity','FontSize',25)
 
@@ -71,7 +83,7 @@ function plot_figures(fig,tbl)
             sessions = unique(tbl.session);
             for s = 1:length(sessions); b(s) = mean(tbl.marginal(tbl.session==sessions(s))); end
             hist(b);
-            set(gca,'XLim',[0 1],'FontSize',20)
+            set(gca,'XLim',[0 1],'FontSize',25)
             ylabel('Frequency','FontSize',25)
             xlabel('Bias','FontSize',25)
 
@@ -82,7 +94,7 @@ function plot_figures(fig,tbl)
             q = linspace(-0.6,1.5,6);
             [m,se,~,q] = interval_stats(resid,tbl.cost,q);
             errorbar(q,m,se,'LineWidth',4);
-            set(gca,'FontSize',20,'XLim',[min(q)-0.1 max(q)+0.1])
+            set(gca,'FontSize',25,'XLim',[min(q)-0.1 max(q)+0.1])
             xlabel('Policy cost','FontSize',25)
             ylabel('Partial residual','FontSize',25)
 
@@ -114,7 +126,7 @@ function plot_figures(fig,tbl)
                 errorbar(q,m(:,j),se(:,j),'o','LineWidth',4,'Color',C(colors(j),:));
             end
             legend(h,{'Left bias' 'Right bias'},'FontSize',25,'Box','Off','Location','best');
-            set(gca,'FontSize',20,'XLim',[min(q)-0.1 max(q)+0.1],'XTick',[-0.5 -0.25 0 0.25 0.5])
+            set(gca,'FontSize',25,'XLim',[min(q)-0.1 max(q)+0.1],'XTick',[-0.5 -0.25 0 0.25 0.5])
             xlabel('Contrast','FontSize',25)
             ylabel('P(right)','FontSize',25)
 
@@ -124,7 +136,7 @@ function plot_figures(fig,tbl)
             estimates = model.Coefficients.Estimate(2:end);
             se = model.Coefficients.SE(2:end);
             errorbar(estimates,1:3,se,'.k','horizontal','MarkerSize',10,'LineWidth',4,'MarkerFaceColor','w');
-            set(gca,'YTick',1:3,'YTickLabel',{'Outcome' 'Action value' 'Cost'},'FontSize',20,'YLim',[0.5 3.5])
+            set(gca,'YTick',1:3,'YTickLabel',{'Outcome' 'Action value' 'Policy cost'},'FontSize',25,'YLim',[0.5 3.5])
             xlabel('Coefficient','FontSize',25);
             hold on;
             plot([0 0],get(gca,'YLim'),'--k','LineWidth',4)
@@ -146,7 +158,7 @@ function plot_figures(fig,tbl)
             plot(coeff,B,'+k','LineWidth',4,'MarkerSize',10);
             h = lsline; h.LineWidth = 4;
 
-            set(gca,'FontSize',20)
+            set(gca,'FontSize',25)
             ylabel('Inverse temperature','FontSize',25)
             xlabel('Neural outcome coefficient','FontSize',25)
 

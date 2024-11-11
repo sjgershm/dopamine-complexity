@@ -1,6 +1,9 @@
 function [state_value, action_value, action_diff] = compute_value(stimulus,reward,action)
 
-    % Compute state and action values
+    % Compute state and action values, and the difference between action
+    % values
+    %
+    % USAGE: [state_value, action_value, action_diff] = compute_value(stimulus,reward,action)
 
     S = unique(stimulus);
     A = unique(action);

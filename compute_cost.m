@@ -1,6 +1,6 @@
-function [cost, marginal] = compute_cost(stimulus,action)
+function [cost, marginal, surprisal] = compute_cost(stimulus,action)
     
-    % Compute policy cost
+    % Compute trial-by-trial policy cost, marginal distribution, and surprisal
 
     [S,~,si] = unique(stimulus);
     [A,~,ai] = unique(action);
@@ -18,6 +18,7 @@ function [cost, marginal] = compute_cost(stimulus,action)
     pA = sum(pSA);
 
     cost = zeros(size(stimulus));
+    surprisal = zeros(size(stimulus));
 
     if nargout > 1
         marginal = zeros(size(stimulus)) + pA(2);
@@ -25,4 +26,5 @@ function [cost, marginal] = compute_cost(stimulus,action)
 
     for i = 1:length(stimulus)
         cost(i) = log(pSA(si(i),ai(i))) - log(pS(si(i))) - log(pA(ai(i)));
+        surprisal(i) = -log(pA(ai(i)));
     end
